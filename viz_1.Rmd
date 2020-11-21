@@ -1,0 +1,237 @@
+---
+title: "plots"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+suppressMessages(library(tidyverse))
+library(ggthemes)
+theme_set(theme_tufte())
+```
+
+```{r}
+stat = c('Openness of Non-Targets', 'Openness of Targets')
+open_ness = c(.604, .7)
+df = cbind.data.frame(stat, open_ness)
+```
+
+```{r}
+plot <- df %>%
+  ggplot(aes(x=stat, col=stat, fill=stat)) +
+  theme_tufte() +
+  geom_col(aes(y=open_ness), alpha=.75) +
+  scale_color_manual(values = c('firebrick2', 'dodgerblue')) +
+  scale_fill_manual(values = c('firebrick2', 'dodgerblue')) +
+  labs(title = 'Difference in Target Probability by Openness',
+       y='Average Openness') +
+  theme(axis.title = element_text(size = 16, face = 'bold'),
+        axis.text = element_text(size = 14),
+        plot.title = element_text(size = 20, hjust = 0.5, face = 'bold'),
+        plot.subtitle = element_text(size = 14, hjust = 0.5),
+        plot.caption = element_text(size = 12),
+        legend.position = 'none',
+        axis.title.x = element_blank(),
+        text=element_text(family="sans")) +
+  coord_cartesian(ylim = c(.4, .72))
+plot
+```
+
+```{r}
+ggsave('plot2.png', plot, dpi = 450)
+```
+
+
+```{r}
+comp_df <- read.csv('/Users/Calvin/Downloads/comp_df.csv')
+comp_df <- comp_df %>%
+  mutate(
+    Pass_Result = case_when(
+      passResult == 'C' ~ 'Complete',
+      passResult == 'I' ~ 'Incomplete',
+      passResult == 'IN' ~ 'Interception'
+    )
+  )
+pf_sum_stats <- read.csv('/Users/Calvin/Downloads/pf_sum_stats.csv')
+```
+
+```{r}
+plot <- comp_df %>%
+  ggplot(aes(x=Pass_Result, col=Pass_Result, fill=Pass_Result)) +
+  theme_tufte() +
+  geom_col(aes(y=Average_Openness), alpha=.75) +
+  scale_color_manual(values = c('firebrick2', 'dodgerblue', 'forestgreen')) +
+  scale_fill_manual(values = c('firebrick2', 'dodgerblue', 'forestgreen')) +
+  labs(title = 'Difference in Pass Result by Openness',
+       y='Average Openness') +
+  theme(axis.title = element_text(size = 16, face = 'bold'),
+        axis.text = element_text(size = 14),
+        plot.title = element_text(size = 20, hjust = 0.5, face = 'bold'),
+        plot.subtitle = element_text(size = 14, hjust = 0.5),
+        plot.caption = element_text(size = 12),
+        legend.position = 'none',
+        axis.title.x = element_blank(),
+        text=element_text(family="sans")) +
+  coord_cartesian(ylim = c(.45, .8))
+plot
+```
+
+```{r}
+ggsave('passResult.png', plot, dpi=450)
+```
+
+```{r}
+library(ggrepel)
+plot <- pf_sum_stats %>%
+  ggplot(aes(x=Average_Openness, y=Average_EPA)) +
+  theme_minimal() +
+  geom_point(
+    aes(
+      color = if_else(Average_EPA > .3 | Average_Openness < .665 | Average_Openness > .745,
+                      "dodgerblue",
+                      "firebrick2"),
+      size = count
+    ),
+    alpha = 0.75
+  ) +
+  geom_smooth(method = 'lm', col='firebrick2', se=F) +
+  labs(title = 'Quarterback EPA by Openness',
+       y='Average EPA',
+       x='Average Openness',
+       size='# of Passes Thrown',
+       caption = 'Dot size scaled by # of Pass Attempts') +
+  theme(axis.title = element_text(size = 15, face = 'bold'),
+        axis.text = element_text(size = 12),
+        plot.title = element_text(size = 20, hjust = 0.5, face = 'bold'),
+        plot.subtitle = element_text(size = 14, hjust = 0.5),
+        plot.caption = element_text(size = 12, face = 'italic'),
+        text=element_text(family="sans"),
+        legend.position = 'none') +
+  scale_color_identity() +
+  geom_text_repel(
+    data = filter(pf_sum_stats, Average_EPA > .3 | Average_Openness < .665 | Average_Openness > .745),
+    aes(label = displayName_QB), color = "dodgerblue",
+    force = 1, point.padding = 0.3,
+    segment.size = 0.2
+  )
+plot
+```
+
+```{r}
+ggsave('qbEPA.png', plot, dpi=450)
+```
+
+```{r}
+optimal_qbs <- read.csv('/Users/Calvin/Downloads/optimal_qbs.csv')
+optimal_qbs <- optimal_qbs %>%
+  mutate(color_col = case_when(
+    pct_found_optimal_rec > .39 ~ 'top',
+    pct_found_optimal_rec > .32 & pct_found_optimal_rec < .39 ~ 'mid',
+    pct_found_optimal_rec < .32 ~ 'low'
+  )
+  )
+```
+
+```{r}
+plot <- optimal_qbs %>%
+  ggplot(aes(x = pct_found_optimal_rec, y = reorder(QB_Name, pct_found_optimal_rec))) +
+  geom_col(aes(fill = case_when(
+    color_col == 'top' ~ 'forestgreen',
+    color_col == 'mid' ~ 'dodgerblue',
+    color_col == 'low' ~ 'firebrick2'
+  )),
+    width = 0.25
+  ) +
+  geom_point(aes(color = case_when(
+    color_col == 'top' ~ 'forestgreen',
+    color_col == 'mid' ~ 'dodgerblue',
+    color_col == 'low' ~ 'firebrick2'
+  )),
+    size = 4
+  ) +
+  scale_fill_identity(aesthetics = c("fill", "colour")) +
+    theme(axis.title = element_text(size = 13, face = 'bold'),
+          axis.text = element_text(size = 9),
+          plot.title = element_text(size = 20, hjust = 1.7, face = 'bold'),
+          plot.subtitle = element_text(size = 14, hjust = 0.5),
+          plot.caption = element_text(size = 11, face = 'italic'),
+          legend.position = 'none',
+          axis.title.y = element_blank(),
+          text=element_text(family="sans")) +
+  labs(
+    x = "% of Throws to Most Open Receiver",
+    title = "QB Rate of Throwing to Most Open Receiver"
+  ) +
+  coord_cartesian(xlim = c(.25, .42))
+plot
+```
+
+
+```{r}
+ggsave('qb_open_rates.png', plot, dpi=450)
+```
+
+```{r}
+plot <- optimal_qbs %>%
+  ggplot(aes(x = pct_found_optimal_rec, y = reorder(QB_Name, pct_found_optimal_rec))) +
+  geom_col(aes(fill = if_else(pct_found_optimal_rec >= mean(optimal_qbs$pct_found_optimal_rec),
+                                 "dodgerblue",
+                                 "firebrick2")),
+    width = 0.25
+  ) +
+  geom_point(aes(color = if_else(pct_found_optimal_rec >= mean(optimal_qbs$pct_found_optimal_rec),
+                                 "dodgerblue",
+                                 "firebrick2")),
+    size = 4
+  ) +
+  scale_fill_identity(aesthetics = c("fill", "colour")) +
+    theme(axis.title = element_text(size = 13, face = 'bold'),
+          axis.text = element_text(size = 9),
+          plot.title = element_text(size = 20, hjust = 1.7, face = 'bold'),
+          plot.subtitle = element_text(size = 14, hjust = 0.5),
+          plot.caption = element_text(size = 11, face = 'italic'),
+          legend.position = 'none',
+          axis.title.y = element_blank(),
+          text=element_text(family="sans")) +
+  labs(
+    x = "% of Throws to Most Open Receiver",
+    title = "QB Rate of Throwing to Most Open Receiver"
+  ) +
+  coord_cartesian(xlim = c(.25, .42))
+plot
+```
+
+```{r}
+event <- read.csv('/Users/Calvin/Downloads/event.csv')
+```
+
+```{r}
+plot <- event %>%
+  ggplot(aes(x=event, col=event, fill=event)) +
+  theme_tufte() +
+  geom_col(aes(y=Average_Openness), alpha=.75) +
+  scale_color_manual(values = c('firebrick2', 'dodgerblue', 'forestgreen')) +
+  scale_fill_manual(values = c('firebrick2', 'dodgerblue', 'forestgreen')) +
+  labs(title = 'Difference in Openness by Point in Time',
+       y='Average Openness') +
+  theme(axis.title = element_text(size = 16, face = 'bold'),
+        axis.text = element_text(size = 14),
+        plot.title = element_text(size = 20, hjust = 0.5, face = 'bold'),
+        plot.subtitle = element_text(size = 14, hjust = 0.5),
+        plot.caption = element_text(size = 12),
+        legend.position = 'none',
+        axis.title.x = element_blank(),
+        text=element_text(family="sans"))
+plot
+```
+
+```{r}
+ggsave('event.png', plot, dpi = 450)
+```
+
+

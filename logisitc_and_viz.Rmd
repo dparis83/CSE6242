@@ -1,0 +1,58 @@
+---
+title: "theme"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+suppressMessages(library(tidyverse))
+library(ggthemes)
+theme_set(theme_tufte())
+```
+
+```{r}
+logistic <- read.csv('/Users/Calvin/Downloads/logistic.csv')
+log_model <- glm(targetedReceiver ~ openness, data = logistic, family = 'binomial')
+summary(log_model)
+```
+
+```{r}
+results <- read.csv('/Users/Calvin/Downloads/results.csv')
+results <- results %>%
+  mutate(
+    Complete = if_else(passResult == 'C', 1, 0)
+  )
+```
+
+```{r}
+log_model <- glm(Complete ~ openness, data = results, family = 'binomial')
+summary(log_model)
+```
+
+```{r}
+plot <- results %>%
+  ggplot(aes(x=openness, y=Complete)) +
+  stat_smooth(method="glm", method.args=list(family="binomial"), col='dodgerblue', size=1.8) +
+  theme_minimal() +
+  labs(title = 'Observed Relationship Between Openness and Completion Probability',
+       x='Openness',
+       y='Completion Probability') +
+  theme(axis.title = element_text(size = 14, face = 'bold'),
+        axis.text = element_text(size = 10),
+        plot.title = element_text(size = 14, hjust = 0.5, face = 'bold'),
+        plot.subtitle = element_text(size = 14, hjust = 0.5),
+        plot.caption = element_text(size = 12, face = 'italic'),
+        text=element_text(family="sans"),
+        legend.position = 'none')
+plot
+```
+
+```{r}
+ggsave('compProb.png', plot, dpi=450)
+```
+
