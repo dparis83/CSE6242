@@ -104,15 +104,17 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 #%% frames datadata
 df_plys = pd.read_pickle('./data/all_weeks.pickle')
 df_plys['gamePlayId'] = df_plys['gameId'] + df_plys['playId']
-get_coords = lambda x: list(x.exterior.coords) if x is not None else np.nan
+get_coords = lambda x: [(idx, ) + i for idx, i in enumerate(x.exterior.coords)] if x is not None else np.nan
 df_plys['polygon'] = df_plys['polygon'].apply(get_coords)
+df_plys['openness'] = df_plys['openness'].astype('float').round(4) * 100
 
 
 # polygons
 df_poly = df_plys[['gameId', 'playId', 'event', 'nflId', 'polygon']].explode('polygon')
 f = ~df_poly['polygon'].isna()
-df_poly.loc[f, 'x'] = df_poly.loc[f, 'polygon'].apply(lambda x: x[0])
-df_poly.loc[f, 'y'] = df_poly.loc[f, 'polygon'].apply(lambda x: x[1])
+df_poly.loc[f, 'order'] = df_poly.loc[f, 'polygon'].apply(lambda x: x[0])
+df_poly.loc[f, 'x'] = df_poly.loc[f, 'polygon'].apply(lambda x: x[1])
+df_poly.loc[f, 'y'] = df_poly.loc[f, 'polygon'].apply(lambda x: x[2])
 df_poly.dropna(inplace=True)
 df_poly.pop('polygon')
 
@@ -289,7 +291,7 @@ def render_content(tab):
                     )
                 ], className='four columns'),
                 html.Div([
-                    html.H3('Play Plot'),
+                    html.H3('Play Openness Plot'),
                     dcc.Graph(
                         id='det_play_openness'
 
@@ -397,13 +399,15 @@ def update_tab2_play_summary(event, gameId, playId):
     [State('det_flt_game', 'value'), State('det_flt_play', 'value')]
 )
 def update_det_play_openness(event, gameId, playId):
-    print(gameId, playId)
+    #print(gameId, playId)
     # play data
     play_filter = \
         (df_plys['gameId']==gameId) &\
         (df_plys['playId']==playId) &\
         (df_plys['event']==event)
     df_ply = df_plys.loc[play_filter].copy()
+    f = ~df_ply['openness'].isna()
+    df_ply.loc[f, 'openness_str'] = df_ply.loc[f, 'openness'].apply(lambda x: f'{x:0.2f}') + '%'
 
     # yardline data
     yd_filter = (df_plays['gameId'] == gameId) & (df_plays['playId'] == playId)
@@ -422,7 +426,8 @@ def update_det_play_openness(event, gameId, playId):
         (df_poly['gameId']==gameId) &\
         (df_poly['playId']==playId) &\
         (df_poly['event']==event)
-    df_polygons = df_poly.loc[poly_filter].copy()
+    df_polygons = df_poly.loc[poly_filter].merge(df_ply[['nflId', 'openness', 'openness_str']], on='nflId').copy()
+    df_polygons.sort_values(['openness', 'order'], ascending=False, inplace=True)
 
     # rotate if play direction is to the left
     if df_ply['playDirection'].to_list()[0]=='left':
@@ -455,7 +460,7 @@ def update_det_play_openness(event, gameId, playId):
             go.Scatter(
                 x=df_tmp['x'],
                 y=df_tmp['y'],
-                text=df_ply['displayName'],
+                text='Player ' + df_tmp['displayName'] + '<br>' + 'Openness: ' + df_tmp['openness_str'],
                 name=poss,
                 mode='markers',
                 marker={'size': 15, 'color': colors[poss]}
@@ -477,23 +482,34 @@ def update_det_play_openness(event, gameId, playId):
     # plot polygons
     for player in df_polygons['nflId'].unique():
         df_tmp = df_polygons.loc[df_polygons['nflId']==player]
+        #print(df_tmp)
+        if df_tmp['openness'].isna().all():
+            line={'width': 1, 'color': '#000000'}
+            showlegend=False
+            name=None
+        else:
+            line = {'width': 3}
+            showlegend=True
+            name = df_tmp['openness_str'].to_list()[0]
+
+        #print(line, showlegend, name)
         fig.add_trace(
             go.Scatter(
                 x=df_tmp['x'],
                 y=df_tmp['y'],
                 mode='lines',
-                line={'width': 1, 'color': '#000000'},
-                showlegend=False
+                line=line,
+                showlegend=showlegend,
+                name=name
             )
         )
 
     fig.update_layout(
-        legend_title_text='Players',
-        height=500
+        legend_title_text='Teams and Openness %'
     )
 
-
     return fig
+
 #%%
 if __name__ == '__main__':
     app.run_server(debug=True)
