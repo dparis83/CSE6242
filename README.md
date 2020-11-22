@@ -41,10 +41,8 @@ python make_gifs.py
 ```
 
 #### Data Visualization Tool
-Make sure both plotly and dash are installed in your environment:
-
 ```shell
-conda install plotly dash
+pip install -r requirements.txt
 ```
 
 Generate a data directory and place [these](https://gtvault-my.sharepoint.com/:f:/g/personal/jperalta8_gatech_edu/ElvMzTGPGJxLrGTU20HnsCsB6URqdsnnP-rsAfzTuxMj1A?e=yChGBQ) files in it. Execute the app.py file (found in the CODE folder) from a terminal:
@@ -53,4 +51,5 @@ Generate a data directory and place [these](https://gtvault-my.sharepoint.com/:f
 python app.py
 ```
 
-Open the url highlighted in the output on a web browser. Should looke like  (http://127.0.0.1:8050/)
+Open the url highlighted in the output on a web browser:
+![data_fiz_image](https://github.com/dparis83/CSE6242/blob/main/misc/viz_exec.png)
