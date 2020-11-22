@@ -24,7 +24,7 @@ make_gifs.py - Uses the images output from dansbot-openness.ipynb to create gifs
 
 ## EXECUTION
 
-#### Gif Generator
+#### Openness Calculation and Gif Generator
 
 pip install -r requirements.txt
 
