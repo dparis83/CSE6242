@@ -25,14 +25,17 @@ make_gifs.py - Uses the images output from dansbot-openness.ipynb to create gifs
 ## EXECUTION
 
 #### Openness Calculation and Gif Generator
-
+```shell
 pip install -r requirements.txt
+```
 
 dansbot-openness.ipynb is run in a jupyter notebook. When running in the Kaggle environment, set the in_kaggle flag found in cell 3 to True. Choose the csv file to create the dataframe by changing the csv_fn in cell 3. Then Run All Cells. The resulting outputs will be a .pickle file of the created dataframe that includes the player rectangles and openness.
 
+#####(This can only be run after dansbot-openness.ipynb is executed.)
+```shell
 python make_gifs.py
-  (This can only be run after dansbot-openness.ipynb is executed.)
-  
+```
+
 #### Data Visualization Tool
 Make sure both plotly and dash are installed in your environment:
 
