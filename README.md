@@ -40,7 +40,7 @@ Make sure both plotly and dash are installed in your environment:
 conda install plotly dash
 ```
 
-Generate a data directory and place [these](https://gtvault-my.sharepoint.com/:f:/g/personal/jperalta8_gatech_edu/ElvMzTGPGJxLrGTU20HnsCsB6URqdsnnP-rsAfzTuxMj1A?e=yChGBQ) files in it. Execute the app.py file from a terminal:
+Generate a data directory and place [these](https://gtvault-my.sharepoint.com/:f:/g/personal/jperalta8_gatech_edu/ElvMzTGPGJxLrGTU20HnsCsB6URqdsnnP-rsAfzTuxMj1A?e=yChGBQ) files in it. Execute the app.py file (found in the CODE folder) from a terminal:
 
 ```shell
 python app.py
