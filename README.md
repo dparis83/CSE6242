@@ -22,7 +22,9 @@ dansbot-openness.ipynb - Takes the week data csv's and calculates the rectangle 
 
 make_gifs.py - Uses the images output from dansbot-openness.ipynb to create gifs that show plays in real time.
 Some Examples:
-![gif1](https://github.com/dparis83/CSE6242/blob/main/gifs/2018090600_190.gif)
+
+![gif1](https://github.com/dparis83/CSE6242/blob/main/gifs/2018112200_190.gif)
+![gif2](https://github.com/dparis83/CSE6242/blob/main/gifs/2018111500_291.gif)
 
 ## EXECUTION
 
