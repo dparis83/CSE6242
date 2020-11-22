@@ -21,6 +21,8 @@ logisitc_and_viz.Rmd - Creates logistic regression models and visualizations.
 dansbot-openness.ipynb - Takes the week data csv's and calculates the rectangle around each players. The rectangles are then used to calculate the "openness" for each eligible receiver. After openness is calculated the resulting dataframe is saved as output to be used for algs that require openness as a parameter. This notebook also creates images for defined plays that show the players on a football field, their rectangle, and the openness of receivers. These images can be used to make gifs that show the play in real time.
 
 make_gifs.py - Uses the images output from dansbot-openness.ipynb to create gifs that show plays in real time.
+Some Examples:
+![gif1](https://github.com/dparis83/CSE6242/2018112200_190.gif "gif 1")
 
 ## EXECUTION
 
