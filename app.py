@@ -207,7 +207,7 @@ df_ply = df_plys.loc[f]
 #%% applayout
 
 app.layout = html.Div(children=[
-    html.H1(children='Quarterback Openness Analysis'),
+    html.H1(children='Quarterback Openness Visualization'),
     dcc.Tabs(
         id='tabs',
         value='tab-1',
@@ -281,7 +281,11 @@ def render_content(tab):
                 html.Div([
                     html.H3('Play Detail'),
                     dash_table.DataTable(
-                        id='tab2_play_summary'
+                        id='tab2_play_summary',
+                        style_data={
+                            'whiteSpace': 'normal',
+                            'height': 'auto',
+                        }
                     )
                 ], className='four columns'),
                 html.Div([
@@ -381,7 +385,6 @@ def update_tab2_play_summary(event, gameId, playId):
     play_filter = (df_plays['gameId'] == gameId) & (df_plays['playId'] == playId)
     cols = ['quarter', 'down', 'yardsToGo', 'possessionTeam', 'epa', 'passResult', 'playDescription']
     df_tmp = df_plays.loc[play_filter, cols].T.reset_index()
-    print(df_tmp)
 
     data = df_tmp.to_dict('records')
     columns = [{"name": str(i), "id": str(i)} for i in df_tmp.columns]
@@ -394,6 +397,7 @@ def update_tab2_play_summary(event, gameId, playId):
     [State('det_flt_game', 'value'), State('det_flt_play', 'value')]
 )
 def update_det_play_openness(event, gameId, playId):
+    print(gameId, playId)
     # play data
     play_filter = \
         (df_plys['gameId']==gameId) &\
@@ -418,15 +422,15 @@ def update_det_play_openness(event, gameId, playId):
         (df_poly['gameId']==gameId) &\
         (df_poly['playId']==playId) &\
         (df_poly['event']==event)
-    df_polygons = df_poly.loc[poly_filter]
+    df_polygons = df_poly.loc[poly_filter].copy()
 
     # rotate if play direction is to the left
     if df_ply['playDirection'].to_list()[0]=='left':
         df_ply['x'] = 120 - df_ply['x']
         df_ply['y'] = 160/3 - df_ply['y']
         yard_line = 120 - yard_line
-        df_poly['x'] = 120 - df_poly['x']
-        df_poly['y'] = 160/3 - df_poly['y']
+        df_polygons['x'] = 120 - df_polygons['x']
+        df_polygons['y'] = 160/3 - df_polygons['y']
 
     # create figure
     fig = generate_field()
