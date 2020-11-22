@@ -512,4 +512,4 @@ def update_det_play_openness(event, gameId, playId):
 
 #%%
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
