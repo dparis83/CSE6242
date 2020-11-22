@@ -6,6 +6,8 @@ Our project utilizes tracking data from the NFL to evaluate Quarterback decision
 
 The following notebooks filter the data into a usable form, calculate our innovative metrics, then fits a few logisitc regression models and trains a Random Forest. Our process allows us to glean insights on Quarterback decision making, and which Quarterbacks throw to the most open receivers.
 
+We've included sample gif visualizations that feature select plays that highlight our openness algorithm in action (make_gifs.py).
+
 ## INSTALLATION
 
 findPlayersWithTargets.ipynb - Run this code on Kaggle to acquire the dataset on Kaggle. This will hold every play and calculate other features used for analysis. The csv output from this will be used to join with the openness calculation.
