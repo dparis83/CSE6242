@@ -10,15 +10,15 @@ We've included sample gif visualizations that feature select plays that highligh
 
 ## INSTALLATION
 
-findPlayersWithTargets.ipynb - Run this code on Kaggle to acquire the dataset on Kaggle. This will hold every play and calculate other features used for analysis. The csv output from this will be used to join with the openness calculation.
+findPlayersWithTargets.ipynb - Run this code on Kaggle to acquire the dataset on Kaggle. This will hold every play and calculate other features used for analysis. The csv output from this will be used to join with the openness calculation. (Not required for gifs or interactive visualization)
 
-implement.ipynb - This notebook creates the Random Forest used to predict target probability. It takes the csv from findPlayersWithTargets.ipynb then joins it to the openness data. In the end, it binds the results so they can be used for analysis. It also creates a dataframe of who each QB was on each play, which is used for analysis. This code was run in Google Colab.
+implement.ipynb - This notebook creates the Random Forest used to predict target probability. It takes the csv from findPlayersWithTargets.ipynb then joins it to the openness data. In the end, it binds the results so they can be used for analysis. It also creates a dataframe of who each QB was on each play, which is used for analysis. This code was run in Google Colab. (Not required for gifs or interactive visualization)
 
-summarise_model.ipynb - Joins files from implement.ipynb to create summary tables and dataframes which are exported for data visualization. This code was run in Google Colab.
+summarise_model.ipynb - Joins files from implement.ipynb to create summary tables and dataframes which are exported for data visualization. This code was run in Google Colab. (Not required for gifs or interactive visualization)
 
-viz_1.Rmd - creates visualizations from the data created in summarise_model.ipynb.
+viz_1.Rmd - creates visualizations from the data created in summarise_model.ipynb. (Not required for gifs or interactive visualization)
 
-logisitc_and_viz.Rmd - Creates logistic regression models and visualizations.
+logisitc_and_viz.Rmd - Creates logistic regression models and visualizations. (Not required for gifs or interactive visualization)
 
 dansbot-openness.ipynb - Takes the week data csv's and calculates the rectangle around each players. The rectangles are then used to calculate the "openness" for each eligible receiver. After openness is calculated the resulting dataframe is saved as output to be used for algs that require openness as a parameter. This notebook also creates images for defined plays that show the players on a football field, their rectangle, and the openness of receivers. These images can be used to make gifs that show the play in real time.
 
