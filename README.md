@@ -54,4 +54,3 @@ python app.py
 ```
 
 Open the url highlighted in the output on a web browser. Should looke like  (http://127.0.0.1:8050/)
-

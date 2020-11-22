@@ -234,8 +234,10 @@ def render_content(tab):
     if tab == 'tab-1':
         return html.Div([
             html.H3('Top 10 Quarterbacks'),
-            plot_top_10(),
+            html.P('The quarterbacks (QBs) were ranked by the average openness of the targeted player per play. Only quarterbacks in the 4th quartile by number of plays, QBs with more than 440 plays, were included for the rank.'),
+	    plot_top_10(),
             html.H3('Compare Quarterbacks'),
+	    html.H5('Avg. EPA vs Avg. Openness'),
             dcc.Dropdown(
                 id='tab1_flt_boxplot',
                 options=[{'label': i, 'value': i} for i in
@@ -374,7 +376,8 @@ def update_tab1_boxplot(quarterBacks):
         fig.update_traces(marker={'size': 15})
 
         fig.update_layout(
-            xaxis={'title': 'Quarterbarck'}
+            xaxis={'title': 'Quarterbacks'},
+	    yaxis={'title': 'Value'}
         )
         return fig
 
